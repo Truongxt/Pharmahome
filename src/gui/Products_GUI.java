@@ -16,10 +16,7 @@ public class Products_GUI extends javax.swing.JPanel {
     public Products_GUI() {
         initComponents();
         
-        cbo_XuatXu.addItem("Mỹ");
-        cbo_XuatXu.addItem("Việt Nam");
-        cbo_XuatXu.addItem("Nhật");
-        cbo_XuatXu.addItem("Canada");
+        
 
     }
 

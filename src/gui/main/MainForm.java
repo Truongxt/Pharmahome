@@ -4,6 +4,7 @@
  */
 package gui.main;
 
+import com.formdev.flatlaf.ui.MigLayoutVisualPadding;
 import gui.menu.Header;
 import gui.menu.Menu;
 import java.awt.BorderLayout;

@@ -4,6 +4,7 @@
  */
 package gui.menu;
 
+import com.formdev.flatlaf.util.Animator;
 import gui.event.EventMenu;
 import gui.event.EventMenuSelected;
 import gui.event.EventShowPopupMenu;

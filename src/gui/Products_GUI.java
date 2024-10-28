@@ -42,7 +42,7 @@ public class Products_GUI extends javax.swing.JPanel {
 
     public Products_GUI() throws UnsupportedLookAndFeelException {
         initComponents();
-        UIManager.setLookAndFeel(new FlatArcDarkIJTheme());
+//        UIManager.setLookAndFeel(new FlatArcDarkIJTheme());
         thuoc_DAO = new Thuoc_DAO();
         model = new DefaultTableModel(new String[]{"Mã thuốc", "Tên Thuốc", "Loại", "Xuất xứ", "Giá", "Đơn vị", "Nsx", "Hsd", "Thuế"}, 0);
         tableThuoc.setModel(model);

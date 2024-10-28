@@ -8,8 +8,10 @@ import com.formdev.flatlaf.FlatClientProperties;
 import dao.KhachHang_DAO;
 import entity.KhachHang;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,6 +31,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import raven.toast.Notifications;
 import utilities.SVGIcon;
@@ -55,6 +58,7 @@ public class Customers_GUI extends javax.swing.JPanel {
         model = new DefaultTableModel(new String[]{"Mã khách hàng", "Tên khách hàng", "Điểm tích lũy", "Tổng tiền tích lũy"}, 0);
         tbl_khachHang.setModel(model);
         listKH = new KhachHang_DAO().getAllKhachHang();
+        jtf_maKhachHang.setText(new KhachHang_DAO().TaoID());
         taiThongTinLenBang(listKH);
         alterTable();
     }
@@ -224,6 +228,7 @@ public class Customers_GUI extends javax.swing.JPanel {
         jtf_maKhachHang.setToolTipText("");
         jtf_maKhachHang.setBorder(javax.swing.BorderFactory.createCompoundBorder(null, javax.swing.BorderFactory.createEmptyBorder(0, 5, 0, 0)));
         jtf_maKhachHang.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jtf_maKhachHang.setEnabled(false);
         jtf_maKhachHang.setFocusable(false);
         jtf_maKhachHang.setMaximumSize(new java.awt.Dimension(2147483647, 40));
         jtf_maKhachHang.setMinimumSize(new java.awt.Dimension(64, 30));
@@ -564,6 +569,11 @@ public class Customers_GUI extends javax.swing.JPanel {
             }
         }
         return null;
+    }
+     private void createOutputFile(SXSSFWorkbook workbook, String excelFilePath) throws FileNotFoundException, IOException, IOException {
+        try (OutputStream os = new FileOutputStream(excelFilePath)) {
+            workbook.write(os);
+        }
     }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_capNhat;

@@ -97,15 +97,18 @@ public class KhachHang_DAO {
         return khachHang;
     }
 
-    public String TaoID(java.util.Date date, boolean gender) {
+    public String TaoID() {
         //Khởi tạo mã Khách hàng KH
         String prefix = "KH";
         //4 Kí tự kế tiếp là năm sinh khách hàng
-        int nam = LocalDate.now().getYear();
-        int thang = LocalDate.now().getMonthValue();
-        int ngay = LocalDate.now().getDayOfMonth();
-        prefix += nam + thang + ngay + generateRandomString(6);
-
+        String nam = (LocalDate.now().getYear()+"").substring(2,4);
+        System.out.println(nam);
+        String thang = (LocalDate.now().getMonthValue()+"");
+        System.out.println(thang);
+        String ngay = (LocalDate.now().getDayOfMonth()+"");
+        System.out.println(ngay);
+        prefix += (nam +"") + (thang+"") +(ngay+"") + generateRandomString(6);
+            System.out.println(prefix);
         return prefix;
     }
 

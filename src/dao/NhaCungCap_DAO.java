@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 public class NhaCungCap_DAO {
 
-    public Boolean create(NhaCungCap ncc) {
+    public static Boolean create(NhaCungCap ncc) {
         int n = 0;
         try {
             PreparedStatement ps = ConnectDB.conn.prepareStatement("insert NhaCungCap values (?,?,?,?,?,?) ");
@@ -82,7 +82,7 @@ public class NhaCungCap_DAO {
         return null;
     }
 
-    public boolean suaNhaCungCap(String maNCC, NhaCungCap newNCC) throws SQLException {
+    public static boolean suaNhaCungCap(String maNCC, NhaCungCap newNCC) throws SQLException {
         int n = 0;
         try {
             PreparedStatement st = ConnectDB.conn.prepareStatement("UPDATE NhaCungCap set"
@@ -106,7 +106,7 @@ public class NhaCungCap_DAO {
         return n > 0;
     }
 
-    public int getSize() {
+    public static int getSize() {
         int n = 0;
         try {
             PreparedStatement ps = ConnectDB.conn.prepareStatement("Select * from NhaCungCap");
@@ -188,8 +188,7 @@ public class NhaCungCap_DAO {
         return listNCC;
     }
 
-    public ArrayList<NhaCungCap> timTheoSDT(String soDT) {
-        ArrayList<NhaCungCap> listNCC = new ArrayList<>();
+    public NhaCungCap timTheoSDT(String soDT) {
         try {
             PreparedStatement ps = ConnectDB.conn.prepareStatement("select * from NhaCungCap where sdt like ?");
             ps.setString(1, "%" + soDT + "%");
@@ -202,7 +201,7 @@ public class NhaCungCap_DAO {
                 String sdt = rs.getString("sdt");
                 boolean trangThai = rs.getBoolean("trangThai");
                 NhaCungCap ncc = new NhaCungCap(maNCC, tenNCC, diaChi, email, sdt, trangThai);
-                listNCC.add(ncc);
+                return ncc;
             }
         } catch (SQLException ex) {
             java.util.logging.Logger.getLogger(NhanVien_DAO.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);

@@ -10,11 +10,14 @@ import com.formdev.flatlaf.FlatLightLaf;
 import com.formdev.flatlaf.IntelliJTheme;
 import gui.Customers_GUI;
 import gui.Employees_GUI;
+import gui.KetCa;
 import gui.LoginForm;
 import gui.NhaCungCap_GUI;
 import gui.Order_GUI;
 import gui.Products_GUI;
 import gui.Return_Order_GUI;
+import gui.ThongKeDoanhThu;
+import gui.ThongKeKhachHang;
 import gui.ThongKeThuoc_GUI;
 import gui.event.EventMenuSelected;
 import gui.event.EventShowPopupMenu;
@@ -99,6 +102,12 @@ public class Main extends javax.swing.JFrame {
                             // Show an error message to the user
                             JOptionPane.showMessageDialog(Main.this, "Error loading ThongKeThuoc_GUI: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                         }
+                    } else if (subMenuIndex == 1) {
+                        main.showForm(new ThongKeKhachHang());
+                    } else if (subMenuIndex == 2) {
+                        main.showForm(new ThongKeDoanhThu());
+                    } else if (subMenuIndex == 3) {
+                        main.showForm(new KetCa());
                     }
                 } else if (menuIndex == 3) {
                     main.showForm(new Customers_GUI());

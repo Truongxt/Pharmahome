@@ -4,20 +4,46 @@ import com.formdev.flatlaf.FlatClientProperties;
 import dao.NhaCungCap_DAO;
 import entity.NhaCungCap;
 import entity.NhanVien;
+import java.awt.Desktop;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ButtonGroup;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.BuiltinFormats;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.streaming.SXSSFRow;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import raven.toast.Notifications;
 import utilities.SVGIcon;
 
 public class NhaCungCap_GUI extends javax.swing.JPanel {
 
     private DefaultTableModel model;
     private ArrayList<NhaCungCap> listNCC;
+    private static CellStyle cellStyleFormatNumber = null;
 
     public NhaCungCap_GUI() {
         initComponents();
@@ -36,7 +62,7 @@ public class NhaCungCap_GUI extends javax.swing.JPanel {
     public final void taiThongTinLenBang(ArrayList<NhaCungCap> list) {
         model.setRowCount(0);
         for (NhaCungCap nhaCungCap : list) {
-            Object[] row = new Object[]{nhaCungCap.getMaNCC(), nhaCungCap.getTenNCC(), nhaCungCap.getSdt(), nhaCungCap.getDiaChi(), nhaCungCap.getEmail(), nhaCungCap.isTrangThai()};
+            Object[] row = new Object[]{nhaCungCap.getMaNCC(), nhaCungCap.getTenNCC(), nhaCungCap.getSdt(), nhaCungCap.getDiaChi(), nhaCungCap.getEmail(), nhaCungCap.isTrangThai() ? "Dang hoat dong" : "khong hoat dong"};
             model.addRow(row);
         }
     }
@@ -76,6 +102,8 @@ public class NhaCungCap_GUI extends javax.swing.JPanel {
         btn_capNhat = new javax.swing.JButton();
         btn_xuatFile = new javax.swing.JButton();
         btn_themMoi = new javax.swing.JButton();
+        jLabel7 = new javax.swing.JLabel();
+        jtf_manhacungcap = new javax.swing.JTextField();
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Tìm kiếm", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 16))); // NOI18N
 
@@ -142,6 +170,11 @@ public class NhaCungCap_GUI extends javax.swing.JPanel {
                 "Mã nhà cung cấp", "Tên nhà cung cấp", "Số điện thoại", "Địa chỉ", "Email", "Trạng thái"
             }
         ));
+        tbl_nhaCungCap.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tbl_nhaCungCapMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tbl_nhaCungCap);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -234,34 +267,13 @@ public class NhaCungCap_GUI extends javax.swing.JPanel {
             }
         });
 
+        jLabel7.setFont(new java.awt.Font("Segoe UI", 0, 16)); // NOI18N
+        jLabel7.setText("Ma cung cấp :");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(6, 6, 6)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jtf_tenNhaCungCap, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jtf_soDienThoai, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jtf_diaChi, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jtf_email, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(rd_dangLamViec)
-                        .addGap(18, 18, 18)
-                        .addComponent(rd_nghiViec)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
                 .addContainerGap(14, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -272,11 +284,46 @@ public class NhaCungCap_GUI extends javax.swing.JPanel {
                     .addComponent(btn_capNhat, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btn_xuatFile, javax.swing.GroupLayout.PREFERRED_SIZE, 197, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(14, 14, 14))
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(6, 6, 6)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jLabel6, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jtf_tenNhaCungCap, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jtf_soDienThoai, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(jtf_diaChi, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jtf_email, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(jPanel3Layout.createSequentialGroup()
+                                .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(rd_dangLamViec)
+                                .addGap(18, 18, 18)
+                                .addComponent(rd_nghiViec))))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jtf_manhacungcap, javax.swing.GroupLayout.PREFERRED_SIZE, 204, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(17, 17, 17)
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jtf_manhacungcap, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(16, 16, 16)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jtf_tenNhaCungCap, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -297,7 +344,7 @@ public class NhaCungCap_GUI extends javax.swing.JPanel {
                     .addComponent(jLabel15, javax.swing.GroupLayout.PREFERRED_SIZE, 29, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(rd_dangLamViec)
                     .addComponent(rd_nghiViec))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 181, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btn_capNhat, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(btn_lamMoi, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -335,13 +382,34 @@ public class NhaCungCap_GUI extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jtf_emailActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtf_emailActionPerformed
-        // TODO add your handling code here:
+
     }//GEN-LAST:event_jtf_emailActionPerformed
 
     private void btn_locActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_locActionPerformed
-        // TODO add your handling code here:
+        model.setRowCount(0);
+        String sdt = jtf_soDienThoai.getText();
+        NhaCungCap ncc = new NhaCungCap_DAO().timTheoSDT(sdt);
+        Object[] obj = initObject(ncc);
+        model.addRow(obj);
+
+
     }//GEN-LAST:event_btn_locActionPerformed
 
+    public Object[] initObject(NhaCungCap ncc) {
+        Object[] obj = new Object[6];
+        obj[0] = ncc.getMaNCC();
+        obj[1] = ncc.getTenNCC();
+        obj[2] = ncc.getDiaChi();
+        obj[3] = ncc.getEmail();
+        obj[4] = ncc.getSdt();
+        if (ncc.isTrangThai()) {
+            obj[5] = "Dang hoat dong";
+
+        } else {
+            obj[5] = "khong hoat dong";
+        }
+        return obj;
+    }
     private void jtf_diaChiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jtf_diaChiActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jtf_diaChiActionPerformed
@@ -351,72 +419,115 @@ public class NhaCungCap_GUI extends javax.swing.JPanel {
     }//GEN-LAST:event_rd_nghiViecActionPerformed
 
     private void btn_lamMoiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_lamMoiActionPerformed
-        // TODO add your handling code here:
-//        lamMoiForm();
-//        jtf_soDienThoai.setText("");
+        jtf_manhacungcap.setText("");
+        jtf_tenNhaCungCap.setText("");
+        jtf_diaChi.setText("");
+        jtf_soDienThoai.setText("");
+        jtf_email.setText("");
+//        ButtonGroup.clearSelection();
     }//GEN-LAST:event_btn_lamMoiActionPerformed
 
     private void btn_capNhatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_capNhatActionPerformed
-//        int row = tbl_khachHang.getSelectedRow();
-//        //        if (row != -1)
-//        try {
-//            if (row != -1) {
-//                KhachHang_DAO.capNhat(jtf_maKhachHang.getText(), getGiaTriForm());
-//                taiThongTinLenBang(listKH);
-//
-//            } else {
-//                Notifications.getInstance().show(Notifications.Type.ERROR, "Chưa chọn khách hàng muốn cập nhật thông tin!");
-//                return;
-//            }
-//            Notifications.getInstance().show(Notifications.Type.SUCCESS, "Cập nhật thông tin khách hàng thành công!");
-//
-//        } catch (Exception ex) {
-//            Logger.getLogger(Customers_GUI.class
-//                .getName()).log(Level.SEVERE, null, ex);
-//        }
+        int index = tbl_nhaCungCap.getSelectedRow();
+        String maNCC = tbl_nhaCungCap.getValueAt(index, 0) + "";
+        NhaCungCap ncc = NhaCungCap_DAO.getNhaCungCap(maNCC);
+        String tenNCC = jtf_tenNhaCungCap.getText();
+        String soDT = jtf_soDienThoai.getText();
+        String diaChi = jtf_diaChi.getText();
+        String email = jtf_email.getText();
+        boolean trangThai = true;
+        if (rd_nghiViec.isSelected()) {
+            trangThai = false;
+        }
+        NhaCungCap newNCC = new NhaCungCap(maNCC, tenNCC, diaChi, email, soDT, trangThai);
+        try {
+            if (NhaCungCap_DAO.suaNhaCungCap(maNCC, newNCC)) {
+                JOptionPane.showConfirmDialog(this, "Sửa thành công", "Thông báo", JOptionPane.DEFAULT_OPTION);
+                Object obj[] = new Object[6];
+                obj[0] = newNCC.getMaNCC();
+                obj[1] = newNCC.getTenNCC();
+                obj[2] = newNCC.getDiaChi();
+                obj[3] = newNCC.getEmail();
+                obj[4] = newNCC.getSdt();
+                if (ncc.isTrangThai()) {
+                    obj[5] = "Dang hoat dong";
+
+                } else {
+                    obj[5] = "khong hoat dong";
+                }
+                model.insertRow(index, obj);
+                model.removeRow(index + 1);
+
+            } else {
+                JOptionPane.showConfirmDialog(this, "Sửa thất bại", "Thông báo", JOptionPane.DEFAULT_OPTION);
+
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(NhaCungCap_GUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_btn_capNhatActionPerformed
 
     private void btn_xuatFileActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_xuatFileActionPerformed
-//        // Hiển thị hộp thoại chọn file
-//        JFileChooser fileChooser = new JFileChooser();
-//        fileChooser.setDialogTitle("Chọn đường dẫn và tên file");
-//        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-//
-//        // Hiển thị hộp thoại và kiểm tra nếu người dùng chọn OK
-//        int userSelection = fileChooser.showSaveDialog(null);
-//        if (userSelection == JFileChooser.APPROVE_OPTION) {
-//            // Lấy đường dẫn và tên file được chọn
-//            File fileToSave = fileChooser.getSelectedFile();
-//            String filePath = fileToSave.getAbsolutePath();
-//
-//            // Gọi phương thức để tạo file Excel với đường dẫn và tên file đã chọn
-//            taoFileExcel(listKH, filePath + ".xlsx");
-//        }
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Chọn đường dẫn và tên file");
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+
+        // Hiển thị hộp thoại và kiểm tra nếu người dùng chọn OK
+        int userSelection = fileChooser.showSaveDialog(null);
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            try {
+                // Lấy đường dẫn và tên file được chọn
+                File fileToSave = fileChooser.getSelectedFile();
+                String filePath = fileToSave.getAbsolutePath();
+                // Gọi phương thức để tạo file Excel với đường dẫn và tên file đã chọn
+                createExcel(NhaCungCap_DAO.getAllNhaCungCap(), filePath + ".xlsx");
+                Desktop.getDesktop().open(new File(filePath + ".xlsx"));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            }
+        }
     }//GEN-LAST:event_btn_xuatFileActionPerformed
 
     private void btn_themMoiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_themMoiActionPerformed
-//        try {
-//            // TODO add your handling code here:
-//            KhachHang kh = new KhachHang(jtf_maKhachHang.getText(), jtf_tenKhachHang.getText(), jtf_sdt.getText(), 0);
-//            boolean isCompleted = KhachHang_DAO.taoMoi(kh);
-//            if (!isCompleted) {
-//                Notifications.getInstance().show(Notifications.Type.ERROR, "Khách hàng đã tồn tại");
-//                return;
-//            }
-//            taiThongTinLenBang(listKH);
-//            lamMoiForm();
-//            Notifications.getInstance().show(Notifications.Type.SUCCESS, "Thêm khách hàng thành công!");
-//
-//        } catch (Exception ex) {
-//            Notifications.getInstance().show(Notifications.Type.ERROR, ex.getMessage());
-//        }
+
+        String maNCC = "abc";
+        String tenNhanVien = jtf_tenNhaCungCap.getText();
+        String soDienThoai = jtf_soDienThoai.getText();
+        String diaChi = jtf_diaChi.getText();
+        String email = jtf_email.getText();
+        boolean trangThai = true;
+        if (rd_nghiViec.isSelected()) {
+            trangThai = false;
+        }
+        NhaCungCap ncc = new NhaCungCap(maNCC, tenNhanVien, soDienThoai, diaChi, email, trangThai);
+        Object obj[] = new Object[6];
+        obj[0] = ncc.getMaNCC();
+        obj[1] = ncc.getTenNCC();
+        obj[2] = ncc.getSdt();
+        obj[3] = ncc.getDiaChi();
+        obj[4] = ncc.getEmail();
+        if (ncc.isTrangThai()) {
+            obj[5] = "Dang hoat dong";
+
+        } else {
+            obj[5] = "khong hoat dong";
+        }
+        if (NhaCungCap_DAO.create(ncc)) {
+            JOptionPane.showConfirmDialog(this, "Thêm thành công", "Xác nhân", JOptionPane.DEFAULT_OPTION);
+            model.addRow(obj);
+        }
+
     }//GEN-LAST:event_btn_themMoiActionPerformed
 
     private void jScrollPane1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jScrollPane1MouseClicked
+
+    }//GEN-LAST:event_jScrollPane1MouseClicked
+
+    private void tbl_nhaCungCapMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tbl_nhaCungCapMouseClicked
         int index = tbl_nhaCungCap.getSelectedRow();
-        String maNhaCungCap = tbl_nhaCungCap.getValueAt(index, 0) + "";
-        NhaCungCap ncc = NhaCungCap_DAO.getNhaCungCap(maNhaCungCap);
-//        jtf_maNCC.setText(ncc.getMaNCC());
+        String maNCC = tbl_nhaCungCap.getValueAt(index, 0) + "";
+        NhaCungCap ncc = NhaCungCap_DAO.getNhaCungCap(maNCC);
+        jtf_manhacungcap.setText(ncc.getMaNCC());
         jtf_tenNhaCungCap.setText(ncc.getTenNCC());
         jtf_soDienThoai.setText(ncc.getSdt());
         jtf_diaChi.setText(ncc.getDiaChi());
@@ -427,8 +538,131 @@ public class NhaCungCap_GUI extends javax.swing.JPanel {
             rd_nghiViec.setSelected(true);
 
         }
-    }//GEN-LAST:event_jScrollPane1MouseClicked
+    }//GEN-LAST:event_tbl_nhaCungCapMouseClicked
+    public void createExcel(ArrayList<NhaCungCap> listEmp, String filePath) throws IOException {
+        SXSSFWorkbook workbook = new SXSSFWorkbook();
+        SXSSFSheet sheet = workbook.createSheet("Danh sách nhân viên");
+        sheet.trackAllColumnsForAutoSizing();
+        Row rowNgayIn = sheet.createRow(0);
+        Cell cell = rowNgayIn.createCell(0);
+        cell.setCellValue("Ngày in: " + LocalDate.now());
+        int rowIndex = 1;
+        writeHeader(sheet, rowIndex);
+        rowIndex = 4;
+        for (NhaCungCap ncc : listEmp) {
+            SXSSFRow row = sheet.createRow(rowIndex);
+            writeNCC(ncc, row);
+            rowIndex++;
+        }
+        writeFooter(sheet, rowIndex);
+        createOutputFile(workbook, filePath);
+        Notifications.getInstance().show(Notifications.Type.SUCCESS, "Xuất file thành công!");
+    }
 
+    private void writeHeader(SXSSFSheet sheet, int rowIndex) {
+        CellStyle cellStyle = createStyleForHeader(sheet);
+        Row rowNgayIn = sheet.createRow(rowIndex);
+
+        Row row = sheet.createRow(rowIndex + 1);
+        //create cells
+
+        Cell cell = row.createCell(0);
+        cell.setCellStyle(cellStyle);
+        cell.setCellValue("Mã nhà cung cấp");
+
+        cell = row.createCell(1);
+        cell.setCellStyle(cellStyle);
+        cell.setCellValue("Tên nhà cung cấp");
+
+        cell = row.createCell(2);
+        cell.setCellStyle(cellStyle);
+        cell.setCellValue("Địa chỉ");
+
+        cell = row.createCell(3);
+        cell.setCellStyle(cellStyle);
+        cell.setCellValue("Số điện thoại");
+
+        cell = row.createCell(4);
+        cell.setCellStyle(cellStyle);
+        cell.setCellValue("Email");
+
+        cell = row.createCell(5);
+        cell.setCellStyle(cellStyle);
+        cell.setCellValue("Trạng thái");
+
+        cell = row.createCell(6);
+        cell.setCellStyle(cellStyle);
+        cell.setCellValue("Trạng thái");
+
+    }
+
+    private static CellStyle createStyleForHeader(Sheet sheet) {
+        // Create font
+        Font font = sheet.getWorkbook().createFont();
+        font.setFontName("Times New Roman");
+        font.setBold(true);
+        font.setFontHeightInPoints((short) 14); // font size
+        font.setColor(IndexedColors.WHITE.getIndex()); // text color
+
+        // Create CellStyle
+        CellStyle cellStyle = sheet.getWorkbook().createCellStyle();
+        cellStyle.setFont(font);
+        cellStyle.setFillForegroundColor(IndexedColors.BLUE.getIndex());
+        cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        cellStyle.setBorderBottom(BorderStyle.THIN);
+        return cellStyle;
+    }
+
+    private void writeFooter(SXSSFSheet sheet, int rowIndex) {
+        Row row = sheet.createRow(rowIndex);
+        Cell cell = row.createCell(8, CellType.STRING);
+        cell.setCellValue("Số lượng nhà cung cấp: " + NhaCungCap_DAO.getSize());
+    }
+
+    private void writeNCC(NhaCungCap ncc, SXSSFRow row) {
+        if (cellStyleFormatNumber == null) {
+            // Format number
+            short format = (short) BuiltinFormats.getBuiltinFormat("#,##0");
+            // DataFormat df = workbook.createDataFormat();
+            // short format = df.getFormat("#,##0");
+
+            //Create CellStyle
+            Workbook workbook = row.getSheet().getWorkbook();
+            cellStyleFormatNumber = workbook.createCellStyle();
+            cellStyleFormatNumber.setDataFormat(format);
+        }
+
+        Cell cell = row.createCell(0);
+        cell.setCellValue(ncc.getMaNCC());
+
+        cell = row.createCell(1);
+        cell.setCellValue(ncc.getTenNCC());
+
+        cell = row.createCell(2);
+        cell.setCellValue(ncc.getDiaChi());
+        cell.setCellStyle(cellStyleFormatNumber);
+
+        cell = row.createCell(3);
+        cell.setCellValue(ncc.getSdt());
+
+        cell = row.createCell(4);
+        cell.setCellValue(ncc.getEmail());
+
+        cell = row.createCell(6);
+        if (ncc.isTrangThai()) {
+            cell.setCellValue("Đang làm việc");
+
+        } else {
+            cell.setCellValue("Nghỉ việc");
+        }
+
+    }
+
+    private void createOutputFile(SXSSFWorkbook workbook, String excelFilePath) throws FileNotFoundException, IOException, IOException {
+        try (OutputStream os = new FileOutputStream(excelFilePath)) {
+            workbook.write(os);
+        }
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btn_capNhat;
@@ -443,12 +677,14 @@ public class NhaCungCap_GUI extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jtf_diaChi;
     private javax.swing.JTextField jtf_email;
+    private javax.swing.JTextField jtf_manhacungcap;
     private javax.swing.JTextField jtf_soDienThoai;
     private javax.swing.JTextField jtf_tenNhaCungCap;
     private javax.swing.JTextField jtf_timSoDienThoai;

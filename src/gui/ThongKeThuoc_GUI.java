@@ -426,7 +426,6 @@ public class ThongKeThuoc_GUI extends javax.swing.JPanel {
         List<Thuoc> list = ds.getAllThuoc();
         System.out.println(list);
         // Assuming you have a JTable and a DefaultTableModel
-;
         model.setRowCount(0);  // Clear existing data
 
         for (Thuoc thuoc : list) {

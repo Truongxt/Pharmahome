@@ -6,11 +6,13 @@ package gui;
 
 import com.formdev.flatlaf.FlatClientProperties;
 import com.formdev.flatlaf.FlatLightLaf;
+import java.awt.event.KeyEvent;
 import java.time.LocalDate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import raven.toast.Notifications;
 
 /**
  *
@@ -65,6 +67,11 @@ public class Return_Order_GUI extends javax.swing.JPanel {
         txtTenNV = new javax.swing.JTextField();
 
         txtReturnOrder.putClientProperty(FlatClientProperties.PLACEHOLDER_TEXT,"Nhập mã hóa đơn");
+        txtReturnOrder.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtReturnOrderActionPerformed(evt);
+            }
+        });
 
         btn_searchReturnOrder.setText("Tìm kiếm");
         btn_searchReturnOrder.setMaximumSize(new java.awt.Dimension(79, 43));
@@ -311,6 +318,31 @@ public class Return_Order_GUI extends javax.swing.JPanel {
     private void btnDoiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDoiActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnDoiActionPerformed
+
+    private void txtReturnOrderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtReturnOrderActionPerformed
+//        // TODO add your handling code here:
+//        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+//            String orderID = txtReturnOrder.getText();
+//            if (orderID.isBlank()) {
+//                Notifications.getInstance().show(Notifications.Type.INFO, "Vui lòng nhập mã hoá đơn để tìm");
+//                return;
+//            }
+//            order = bus.getOrder(orderID);
+//            if (order == null) {
+//                Notifications.getInstance().show(Notifications.Type.WARNING, "Mã hoá đơn " + orderID + " không tìm thấy");
+//                return;
+//            }
+//            if (bus.isExist(order)) {
+//                Notifications.getInstance().show(Notifications.Type.WARNING, "Hoá đơn này đã thực hiện đổi trả");
+//                return;
+//            }
+//            if (!isAvaiable(order)) {
+//                Notifications.getInstance().show(Notifications.Type.WARNING, "Hoá đơn này không đủ điều kiện thực hiện đổi trả");
+//                return;
+//            }
+//            renderOrderDetail(orderID);
+//        }
+    }//GEN-LAST:event_txtReturnOrderActionPerformed
 
         public String TaoID() {
         //Khởi tạo mã Khách hàng KH

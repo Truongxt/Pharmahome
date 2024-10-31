@@ -11,6 +11,7 @@ import com.formdev.flatlaf.IntelliJTheme;
 import gui.Customers_GUI;
 import gui.Employees_GUI;
 import gui.KetCa;
+import gui.KiemTien_GUI;
 import gui.LoginForm;
 import gui.NhaCungCap_GUI;
 import gui.Order_GUI;
@@ -107,7 +108,7 @@ public class Main extends javax.swing.JFrame {
                     } else if (subMenuIndex == 2) {
                         main.showForm(new ThongKeDoanhThu());
                     } else if (subMenuIndex == 3) {
-                        main.showForm(new KetCa());
+                        main.showForm(new KiemTien_GUI());
                     }
                 } else if (menuIndex == 3) {
                     main.showForm(new Customers_GUI());

@@ -15,6 +15,7 @@ import gui.NhaCungCap_GUI;
 import gui.Order_GUI;
 import gui.Products_GUI;
 import gui.Return_Order_GUI;
+import gui.ThongKeDoanhThu;
 import gui.ThongKeThuoc_GUI;
 import gui.event.EventMenuSelected;
 import gui.event.EventShowPopupMenu;
@@ -94,6 +95,15 @@ public class Main extends javax.swing.JFrame {
                     if (subMenuIndex == 0) {
                         try {
                             main.showForm(new ThongKeThuoc_GUI());
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                            // Show an error message to the user
+                            JOptionPane.showMessageDialog(Main.this, "Error loading ThongKeThuoc_GUI: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+                        }
+                    }
+                    if (subMenuIndex == 2) {
+                        try {
+                            main.showForm(new ThongKeDoanhThu());
                         } catch (Exception ex) {
                             ex.printStackTrace();
                             // Show an error message to the user

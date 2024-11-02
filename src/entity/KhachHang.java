@@ -96,9 +96,7 @@ public class KhachHang {
         return Objects.equals(this.getMaKH(), other.getMaKH());
     }
 
-    @Override
-    public String toString() {
-        throw new UnsupportedOperationException();
-    }
+    
+   
 
 }

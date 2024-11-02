@@ -4,11 +4,16 @@ import entity.ChiTietHoaDon;
 import entity.Thuoc;
 import entity.HoaDon;
 import connect.ConnectDB;
+import entity.ThangVaDoanhThu;
+import entity.ThuocVaLuotBan;
 import java.sql.*;
 import java.util.ArrayList;
 import entity.ThuocvaDoanhThu;
-public class ChiTietHoaDon_DAO {
+import java.time.LocalDate;
+import java.time.YearMonth;
 
+public class ChiTietHoaDon_DAO {
+    
     // Phương thức tạo mới một đối tượng ChiTietHoaDon
     public Boolean create(ChiTietHoaDon chiTiet) {
         int n = 0;
@@ -130,6 +135,7 @@ public class ChiTietHoaDon_DAO {
                      "FROM ChiTietHoaDon " +
                      "GROUP BY maThuoc " +
                      "ORDER BY doanhThu DESC";
+        
         PreparedStatement ps = ConnectDB.conn.prepareStatement(sql);
         ResultSet rs = ps.executeQuery();
         
@@ -148,5 +154,172 @@ public class ChiTietHoaDon_DAO {
     return topThuocList;
 }
 
+public double getDoanhThu(String maThuoc) {
+    double doanhThu = 0;
+    
+    try {
+        String sql = "SELECT SUM(soLuong * donGia) AS doanhThu " +
+                     "FROM ChiTietHoaDon " +
+                     "WHERE maThuoc = ? " + // Thêm dấu cộng
+                     "GROUP BY maThuoc " +
+                     "ORDER BY doanhThu DESC";
+                     
+        PreparedStatement ps = ConnectDB.conn.prepareStatement(sql);
+        ps.setString(1, maThuoc); // Sử dụng setString nếu maThuoc là String
+        ResultSet rs = ps.executeQuery(); // Gọi executeQuery() sau khi đặt tham số
 
+        while (rs.next()) {
+            
+            doanhThu = rs.getDouble("doanhThu");
+            
+           
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    System.out.println(doanhThu);
+    return doanhThu;
+}
+
+public ChiTietHoaDon getChiTietHoaDonTheoMa(String maHoaDon) {
+        try {
+            PreparedStatement ps = ConnectDB.conn.prepareStatement("SELECT * FROM ChiTietHoaDon WHERE maHD = ?");
+            
+            ps.setString(1, maHoaDon);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                int soLuong = rs.getInt("soLuong");
+                double donGia = rs.getDouble("donGia");
+                
+                
+                HoaDon hoaDon = new HoaDon_DAO().getHoaDon(maHoaDon);
+                
+                return new ChiTietHoaDon(hoaDon);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+public int getsoLuongBan(String maThuoc) {
+    int soLuong = 0;
+    
+    try {
+        String sql = "SELECT  sum(soLuong) as soLuong FROM ChiTietHoaDon WHERE maThuoc = ? ";
+                     
+        PreparedStatement ps = ConnectDB.conn.prepareStatement(sql);
+        ps.setString(1, maThuoc); // Sử dụng setString nếu maThuoc là String
+        ResultSet rs = ps.executeQuery(); // Gọi executeQuery() sau khi đặt tham số
+
+        while (rs.next()) {
+            
+            soLuong = rs.getInt("soLuong");
+            
+           
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    System.out.println(soLuong);
+    return soLuong;
+}
+    public ArrayList<ChiTietHoaDon> getTop10ThuocCoLuotBan(int month, int year){
+        ArrayList<HoaDon> arrHoaDon= new ArrayList<HoaDon>();
+        HoaDon_DAO hoaDon_DAO= new HoaDon_DAO();
+        arrHoaDon= hoaDon_DAO.getHoaDonTrongThang(month, year);
+        ArrayList<ChiTietHoaDon> arrCTHD= new ArrayList<ChiTietHoaDon>();
+        for (HoaDon hoaDon : arrHoaDon) {
+            arrCTHD.add(getChiTietHoaDonTheoMa(hoaDon.getMaHD()));
+        }
+        
+        
+        
+        
+        return arrCTHD;
+}
+public ArrayList<ThuocVaLuotBan> getThuocCoLuotBanCaoNhatTrongThang(int thang, int nam) {
+    ArrayList<ThuocVaLuotBan> topThuocList = new ArrayList<>();
+    
+    try {
+        // Tính toán ngày đầu và ngày cuối của tháng
+        YearMonth yearMonth = YearMonth.of(nam, thang);
+        LocalDate firstDayOfMonth = yearMonth.atDay(1);
+        LocalDate lastDayOfMonth = yearMonth.atEndOfMonth();
+
+        // Lấy danh sách số lượng bán của từng loại thuốc trong tháng cụ thể
+        String sql = "SELECT c.maThuoc, SUM(c.soLuong) AS soLuong " +
+                     "FROM HoaDon h " +
+                     "JOIN ChiTietHoaDon c ON h.maHD = c.maHD " +
+                     "WHERE h.ngayLap BETWEEN ? AND ? " + 
+                     "GROUP BY c.maThuoc " + 
+                     "ORDER BY soLuong DESC";  // Sắp xếp theo số lượng bán giảm dần
+        
+        PreparedStatement ps = ConnectDB.conn.prepareStatement(sql);
+        ps.setDate(1, java.sql.Date.valueOf(firstDayOfMonth)); // Ngày đầu tháng
+        ps.setDate(2, java.sql.Date.valueOf(lastDayOfMonth));   // Ngày cuối tháng
+        
+        ResultSet rs = ps.executeQuery();
+        
+        while (rs.next()) {
+            String maThuoc = rs.getString("maThuoc");
+            int luotBan = rs.getInt("soLuong");
+            
+            // Lấy thông tin thuốc
+            Thuoc thuoc = new Thuoc_DAO().getThuoc(maThuoc);
+            ThuocVaLuotBan thuocLuotBan = new ThuocVaLuotBan(thuoc, luotBan);
+            topThuocList.add(thuocLuotBan);
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    
+    return topThuocList;
+}
+
+public ArrayList<ThuocvaDoanhThu> getThuocCoDoanhThuCaoNhatTrongThang(int thang, int nam) {
+    ArrayList<ThuocvaDoanhThu> topThuocList = new ArrayList<>();
+
+    try {
+        // Tính toán ngày đầu và ngày cuối của tháng
+        YearMonth yearMonth = YearMonth.of(nam, thang);
+        LocalDate firstDayOfMonth = yearMonth.atDay(1);
+        LocalDate lastDayOfMonth = yearMonth.atEndOfMonth();
+
+        // Lấy danh sách doanh thu của từng loại thuốc trong tháng cụ thể
+        String sql = "SELECT c.maThuoc, SUM(c.soLuong * c.donGia) AS doanhThu " +
+                     "FROM HoaDon h " +
+                     "JOIN ChiTietHoaDon c ON h.maHD = c.maHD " +
+                     "WHERE h.ngayLap BETWEEN ? AND ? " + 
+                     "GROUP BY c.maThuoc " + 
+                     "ORDER BY doanhThu DESC";  // Sắp xếp theo doanh thu giảm dần
+
+        PreparedStatement ps = ConnectDB.conn.prepareStatement(sql);
+        ps.setDate(1, java.sql.Date.valueOf(firstDayOfMonth)); // Ngày đầu tháng
+        ps.setDate(2, java.sql.Date.valueOf(lastDayOfMonth));   // Ngày cuối tháng
+
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            String maThuoc = rs.getString("maThuoc");
+            double doanhThu = rs.getDouble("doanhThu");
+
+            // Lấy thông tin thuốc
+            Thuoc thuoc = new Thuoc_DAO().getThuoc(maThuoc);
+            ThuocvaDoanhThu thuocDoanhThu = new ThuocvaDoanhThu(thuoc, doanhThu);
+            topThuocList.add(thuocDoanhThu);
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+
+    return topThuocList;
+}
+
+
+
+
+    public static void main(String[] args) throws SQLException {
+        ConnectDB.connect();
+        System.out.println(new ChiTietHoaDon_DAO());
+    }
 }

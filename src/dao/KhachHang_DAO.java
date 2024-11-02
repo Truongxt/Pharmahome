@@ -78,24 +78,30 @@ public class KhachHang_DAO {
     }
    
 
-    public static KhachHang getKhachHang(String maKH) {
-        KhachHang khachHang = null;
-        try {
-            PreparedStatement ps = ConnectDB.conn.prepareStatement("SELECT * FROM KhachHang WHERE maKhachHang = ?");
-            ps.setString(1, maKH);
-            ResultSet rs = ps.executeQuery();
+   public KhachHang getKhachHang(String maKH) {
+    KhachHang khachHang = null;
+    String sql = "SELECT * FROM KhachHang WHERE maKhachHang = ?";
+
+    try (PreparedStatement ps = ConnectDB.conn.prepareStatement(sql)) {
+        ps.setString(1, maKH);
+        try (ResultSet rs = ps.executeQuery()) {
             if (rs.next()) {
                 String maKhachHang = rs.getString("maKhachHang");
                 String tenKhachHang = rs.getString("tenKhachHang");
                 String sdt = rs.getString("sdt");
                 Long diemTichLuy = rs.getLong("diemTichLuy");
+                
+                // Tạo đối tượng KhachHang
                 khachHang = new KhachHang(maKhachHang, tenKhachHang, sdt, diemTichLuy);
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
-        return khachHang;
+    } catch (SQLException e) {
+        e.printStackTrace();
+        // Có thể ném một ngoại lệ tùy chỉnh hoặc thực hiện một hành động nào đó nếu cần
     }
+
+    return khachHang;
+}
 
     public String TaoID(java.util.Date date, boolean gender) {
         //Khởi tạo mã Khách hàng KH
@@ -170,6 +176,13 @@ public class KhachHang_DAO {
             return false;
         }
 
+    }
+    public static void main(String[] args) throws SQLException {
+        ConnectDB.connect();
+        KhachHang_DAO kh_dao= new KhachHang_DAO();
+        
+        KhachHang kh= kh_dao.getKhachHang("KH00000001");
+        System.out.println(kh);
     }
 }
 

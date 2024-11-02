@@ -55,4 +55,8 @@ public class ChiTietHoaDon {
         this.hoaDon = hoaDon;
     }
 
+    public ChiTietHoaDon(HoaDon hoaDon) {
+        this.hoaDon = hoaDon;
+    }
+
 }

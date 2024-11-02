@@ -13,10 +13,7 @@ public class HoaDon {
         private NhanVien nhanVien;
         
 
-        @Override
-	public String toString() {
-		throw new UnsupportedOperationException();
-	}
+      
 
 	public void tinhThanhTien() {
 		throw new UnsupportedOperationException();

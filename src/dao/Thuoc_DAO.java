@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.time.LocalDate;
+import java.util.List;
 
 public class Thuoc_DAO {
 
@@ -65,7 +66,7 @@ public class Thuoc_DAO {
 
                 Date hsdDate = rs.getDate("hsd");
                 LocalDate hsd = (hsdDate != null) ? hsdDate.toLocalDate() : null;
-                System.out.println(hsd);
+//                System.out.println(tenThuoc);
 
                 Date nsxDate = rs.getDate("nsx");
                 LocalDate nsx = (nsxDate != null) ? nsxDate.toLocalDate() : null;
@@ -179,7 +180,7 @@ public class Thuoc_DAO {
 
                 Date hsdDate = rs.getDate("hsd");
                 LocalDate hsd = (hsdDate != null) ? hsdDate.toLocalDate() : null;
-                System.out.println(hsd);
+                //System.out.println(hsd);
 
                 Date nsxDate = rs.getDate("nsx");
                 LocalDate nsx = (nsxDate != null) ? nsxDate.toLocalDate() : null;
@@ -231,5 +232,12 @@ public class Thuoc_DAO {
         }
         return list;
     }
-
+//    public static void main(String[] args) {
+//        Thuoc_DAO a = new Thuoc_DAO();
+//        ArrayList<Thuoc> arr= new ArrayList<>();
+//        arr= a.getAllThuoc();
+//        for (Thuoc thuoc : arr) {
+//            System.out.println(thuoc.getTenThuoc());
+//        }
+//    }
 }
